@@ -1,0 +1,46 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://subscenes/Player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://subscenes/Agent.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/SceneTemplate.tscn" type="PackedScene" id=3]
+
+[sub_resource type="CubeMesh" id=1]
+size = Vector3( 30, 2, 30 )
+
+[sub_resource type="SpatialMaterial" id=2]
+albedo_color = Color( 0.854902, 0.870588, 0.858824, 1 )
+
+[sub_resource type="BoxShape" id=3]
+extents = Vector3( 15, 1, 15 )
+
+[node name="Main" instance=ExtResource( 3 )]
+
+[node name="CameraPivot" type="Position3D" parent="World" index="0"]
+transform = Transform( 1, 0, 0, 0, 0.5, 0.866025, 0, -0.866025, 0.5, 0, 0, 5 )
+
+[node name="Camera" type="Camera" parent="World/CameraPivot" index="0"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.38419e-06, 18 )
+current = true
+
+[node name="Ground" type="StaticBody" parent="World" index="1"]
+
+[node name="MeshInstance" type="MeshInstance" parent="World/Ground" index="0"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0 )
+mesh = SubResource( 1 )
+material/0 = SubResource( 2 )
+
+[node name="CollisionShape" type="CollisionShape" parent="World/Ground" index="1"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0 )
+shape = SubResource( 3 )
+
+[node name="DirectionalLight" type="DirectionalLight" parent="World" index="2"]
+transform = Transform( 1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 13, 0 )
+shadow_enabled = true
+
+[node name="Player" parent="World" index="3" instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10 )
+MoveSpeed = 15
+MoveAcceleration = 60
+
+[node name="Agent" parent="World" index="4" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8 )
