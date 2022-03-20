@@ -80,7 +80,6 @@ namespace Manager
             else Tree.Paused = false;
         }
 
-        
         public void QuitGame() => Tree.Quit();
 
         public async Task<T> LoadAsync<T>(string path) where T : Resource

@@ -16,10 +16,10 @@ extents = Vector3( 15, 1, 15 )
 [node name="Main" instance=ExtResource( 3 )]
 
 [node name="CameraPivot" type="Position3D" parent="World" index="0"]
-transform = Transform( 1, 0, 0, 0, 0.5, 0.866025, 0, -0.866025, 0.5, 0, 0, 5 )
+transform = Transform( 1, 0, 0, 0, 0.5, -0.866025, 0, 0.866025, 0.5, 0, 0, -4.00469 )
 
 [node name="Camera" type="Camera" parent="World/CameraPivot" index="0"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.38419e-06, 18 )
+transform = Transform( -1, 0, -1.50996e-07, 0, 1, 0, 1.50996e-07, 0, -1, -2.39761e-07, -0.653303, -14.263 )
 current = true
 
 [node name="Ground" type="StaticBody" parent="World" index="1"]
@@ -38,9 +38,16 @@ transform = Transform( 1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0
 shadow_enabled = true
 
 [node name="Player" parent="World" index="3" instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10 )
-MoveSpeed = 15
-MoveAcceleration = 60
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8.09683 )
+MoveSpeed = 10
+MoveAcceleration = 30
+RotationAcceleration = 1000
 
 [node name="Agent" parent="World" index="4" instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0743628, 0, 7.12408 )
+PlayerPath = NodePath("../Player")
+
+[node name="Pivot" parent="World/Agent" index="0"]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0 )
+
+[editable path="World/Agent"]
