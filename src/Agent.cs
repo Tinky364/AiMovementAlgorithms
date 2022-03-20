@@ -1,26 +1,26 @@
-﻿using Ai.Kinematic;
+﻿using Ai;
+using Ai.Kinematic;
 using Godot;
 
 public class Agent : KinematicBody
 {
     [Export]
     public NodePath PlayerPath;
-    [Export]
+    [Export(PropertyHint.Range, "0,100,or_greater")]
     public int MaxChaseSpeed = 5;
-    [Export]
+    [Export(PropertyHint.Range, "0,100,or_greater")]
     public int MaxRotation = 5;
-    [Export]
+    [Export(PropertyHint.Range, "0,10,or_greater")]
     public float ChaseStopRadius = 2f;
+    
+    public Vector3 Forward { get; private set; }
 
     private StaticInfo _staticInfo;
     private KinematicSeek _kinematicSeek;
     private KinematicWander _kinematicWander;
-    
-    public Player Player { get; private set; }
+    private Player _player;
     private Spatial _pivot;
     private LineDrawer _lineDrawer;
-    
-    public Vector3 Forward { get; private set; }
 
     public override void _Ready()
     {
@@ -29,11 +29,11 @@ public class Agent : KinematicBody
         _lineDrawer = new LineDrawer(); 
         AddChild(_lineDrawer);
         
-        Player = GetNode<Player>(PlayerPath);
+        _player = GetNode<Player>(PlayerPath);
         
         _staticInfo = new StaticInfo();
         _kinematicSeek = new KinematicSeek(
-            _staticInfo, Player.StaticInfo, MaxChaseSpeed, ChaseStopRadius
+            _staticInfo, _player.StaticInfo, MaxChaseSpeed, ChaseStopRadius
         );
         _kinematicWander = new KinematicWander(_staticInfo, MaxChaseSpeed, MaxRotation);
     }

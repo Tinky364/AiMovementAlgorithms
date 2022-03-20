@@ -1,27 +1,28 @@
-using Ai.Kinematic;
+using Ai;
 using Godot;
 using Manager;
 
 public class Player : KinematicBody
 {
-    [Export]
+    [Export(PropertyHint.Range, "0,100,or_greater")]
     public int MoveSpeed = 20;
-    [Export]
+    [Export(PropertyHint.Range, "0,500,or_greater")]
     public int MoveAcceleration = 80;
-    [Export]
+    [Export(PropertyHint.Range, "0,500,or_greater")]
     public int FallAcceleration = 60;
-    [Export]
+    [Export(PropertyHint.Range, "0,500,or_greater")]
     public int JitterAcceleration = 20;
-    [Export]
+    [Export(PropertyHint.Range, "0,500,or_greater")]
     public int RotationAcceleration = 40;
 
     public StaticInfo StaticInfo;
+    public Vector3 Forward { get; private set; }
+    public Vector3 Velocity => _velocity;
+    
     private Spatial _pivot;
     private LineDrawer _lineDrawer;
     private Vector3 _velocity;
-    public Vector3 Velocity => _velocity;
     private Vector3 _inputAxis;
-    public Vector3 Forward { get; private set; }
 
     public override void _Ready()
     {
@@ -39,17 +40,16 @@ public class Player : KinematicBody
     public override void _PhysicsProcess(float delta)
     {
         _inputAxis = CalculateAxisInput();
-       
         _velocity = CalculateVelocity(_velocity, _inputAxis, MoveSpeed, MoveAcceleration, delta);
         _velocity = CalculateGravity(_velocity, FallAcceleration, delta);
-        
-        _pivot.RotationDegrees = CalculateOrientationY(
-            _pivot.RotationDegrees, _inputAxis, RotationAcceleration, delta
-        );
+        _pivot.RotationDegrees = new Vector3
+        {
+            x = _pivot.RotationDegrees.x,
+            y = NewOrientation(_pivot.RotationDegrees.y, _inputAxis, RotationAcceleration, delta),
+            z = _pivot.RotationDegrees.z
+        };
         Forward = _pivot.Transform.basis.z;
-        
         _velocity = MoveAndSlide(_velocity, Vector3.Up);
-        
         StaticInfo.Update(GlobalTransform.origin, _pivot.RotationDegrees.y);
     }
 
@@ -65,19 +65,17 @@ public class Player : KinematicBody
         return inputAxis;
     }
 
-    private Vector3 CalculateOrientationY(
-        Vector3 rotation, Vector3 direction, float acceleration, float delta
+    private float NewOrientation(
+        float current, Vector3 direction, float acceleration, float delta
     )
     {
-        if (direction == Vector3.Zero) return rotation;
-        
-        float targetRotationY = Mathf.Rad2Deg(Mathf.Atan2(direction.x, direction.z));
-        float diff = (targetRotationY - rotation.y + 180) % 360 - 180;
+        if (direction == Vector3.Zero) return current;
+        float targetOrientation = Mathf.Rad2Deg(Mathf.Atan2(direction.x, direction.z));
+        float diff = (targetOrientation - current + 180) % 360 - 180;
         diff = diff < -180 ? diff + 360 : diff;
-        if (Mathf.Abs(diff) <= 0.1f) return rotation;
-        
-        rotation.y = Mathf.MoveToward(rotation.y, rotation.y + diff, acceleration * delta);
-        return rotation;
+        if (Mathf.Abs(diff) <= 0.1f) return current;
+        current = Mathf.MoveToward(current, current + diff, acceleration * delta);
+        return current;
     }
 
     private Vector3 CalculateVelocity(

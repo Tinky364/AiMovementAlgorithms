@@ -8,8 +8,8 @@ namespace Ai.Kinematic
         public StaticInfo Target { get; set; }
         public int MaxSpeed { get; set; }
         public float Radius { get; set; }
-        
-        private float _timeToTarget = 0.25f;
+
+        private const float TimeToTarget = 0.25f;
 
         public KinematicSeek(StaticInfo character, StaticInfo target, int maxSpeed, float radius)
         {
@@ -30,7 +30,7 @@ namespace Ai.Kinematic
             if (result.Velocity.Length() < Radius) return false;
             
             // Calculate velocity.
-            result.Velocity /= _timeToTarget;
+            result.Velocity /= TimeToTarget;
             if (result.Velocity.Length() > MaxSpeed)
                 result.Velocity = result.Velocity.Normalized() * MaxSpeed;
             

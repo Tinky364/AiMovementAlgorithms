@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace Ai.Kinematic
+namespace Ai
 {
     public class StaticInfo
     {
