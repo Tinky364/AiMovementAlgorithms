@@ -4,13 +4,13 @@ namespace Ai.Kinematic
 {
     public class KinematicWander
     {
-        public StaticInfo Character { get; set; }
+        public AiInfo Character { get; set; }
         public int MaxSpeed { get; set; }
         public int MaxRotation { get; set; }
 
         private readonly RandomNumberGenerator _rng;
 
-        public KinematicWander(StaticInfo character, int maxSpeed, int maxRotation)
+        public KinematicWander(AiInfo character, int maxSpeed, int maxRotation)
         {
             Character = character;
             MaxSpeed = maxSpeed;
@@ -19,9 +19,9 @@ namespace Ai.Kinematic
             _rng.Randomize();
         }
 
-        public bool GetSteering(out KinematicSteeringOutput result)
+        public bool GetSteering(out SteeringOutput result)
         {
-            result = new KinematicSteeringOutput();
+            result = new SteeringOutput();
 
             // Calculate the direction vector of the character from its orientation.
             Vector3 direction = new Vector3(
@@ -29,6 +29,7 @@ namespace Ai.Kinematic
                 Mathf.Cos(Mathf.Deg2Rad(Character.Orientation))
             );
             
+            // Calculate the velocity.
             result.Velocity = MaxSpeed * direction;
 
             // Change the character`s orientation randomly.

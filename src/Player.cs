@@ -1,6 +1,7 @@
-using Ai;
 using Godot;
 using Manager;
+using KinematicAiInfo = Ai.Kinematic.AiInfo;
+using SteeringAiInfo = Ai.SteeringBehavior.AiInfo;
 
 public class Player : KinematicBody
 {
@@ -14,22 +15,25 @@ public class Player : KinematicBody
     public int JitterAcceleration = 20;
     [Export(PropertyHint.Range, "0,500,or_greater")]
     public int RotationAcceleration = 40;
-
-    public StaticInfo StaticInfo;
+    
     public Vector3 Forward { get; private set; }
     public Vector3 Velocity => _velocity;
-    
     private Spatial _pivot;
     private LineDrawer _lineDrawer;
     private Vector3 _velocity;
     private Vector3 _inputAxis;
+    
+    public KinematicAiInfo KinematicAiInfo;
+    public SteeringAiInfo SteeringAiInfo;
 
     public override void _Ready()
     {
         _pivot= GetNode<Spatial>("Pivot");
         _lineDrawer = new LineDrawer();
         AddChild(_lineDrawer);
-        StaticInfo = new StaticInfo();
+        
+        KinematicAiInfo = new KinematicAiInfo();
+        SteeringAiInfo = new SteeringAiInfo();
     }
 
     public override void _Process(float delta)
@@ -50,7 +54,9 @@ public class Player : KinematicBody
         };
         Forward = _pivot.Transform.basis.z;
         _velocity = MoveAndSlide(_velocity, Vector3.Up);
-        StaticInfo.Update(GlobalTransform.origin, _pivot.RotationDegrees.y);
+        
+        KinematicAiInfo.Equalize(GlobalTransform.origin, _pivot.RotationDegrees.y);
+        SteeringAiInfo.Equalize(GlobalTransform.origin, _pivot.RotationDegrees.y, _velocity, 0);
     }
 
     private Vector3 CalculateAxisInput()

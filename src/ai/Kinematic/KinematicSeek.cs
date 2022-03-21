@@ -4,14 +4,14 @@ namespace Ai.Kinematic
 {
     public class KinematicSeek
     {
-        public StaticInfo Character { get; set; }
-        public StaticInfo Target { get; set; }
+        public AiInfo Character { get; set; }
+        public AiInfo Target { get; set; }
         public int MaxSpeed { get; set; }
         public float Radius { get; set; }
 
         private const float TimeToTarget = 0.25f;
 
-        public KinematicSeek(StaticInfo character, StaticInfo target, int maxSpeed, float radius)
+        public KinematicSeek(AiInfo character, AiInfo target, int maxSpeed, float radius)
         {
             Character = character;
             Target = target;
@@ -19,25 +19,26 @@ namespace Ai.Kinematic
             Radius = radius;
         }
 
-        public bool GetSteering(out KinematicSteeringOutput result)
+        public bool GetSteering(out SteeringOutput result)
         {
-            result = new KinematicSteeringOutput();
+            result = new SteeringOutput();
             
-            // Get the direction to the target.
+            // Calculate the distance vector to the target.
             result.Velocity = Target.Position - Character.Position; 
             
             // Check if the character is within radius.
             if (result.Velocity.Length() < Radius) return false;
             
-            // Calculate velocity.
+            // Calculate the velocity.
             result.Velocity /= TimeToTarget;
             if (result.Velocity.Length() > MaxSpeed)
                 result.Velocity = result.Velocity.Normalized() * MaxSpeed;
             
-            // Face in the direction the character wants to move.
+            // Face the character in the direction the character wants to move.
             Character.Orientation = NewOrientation(Character.Orientation, result.Velocity); 
             
             result.Rotation = 0;
+            
             return true;
         }
 

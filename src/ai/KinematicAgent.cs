@@ -1,8 +1,7 @@
-﻿using Ai;
-using Ai.Kinematic;
+﻿using Ai.Kinematic;
 using Godot;
 
-public class Agent : KinematicBody
+public class KinematicAgent : KinematicBody
 {
     [Export]
     public NodePath PlayerPath;
@@ -14,13 +13,13 @@ public class Agent : KinematicBody
     public float ChaseStopRadius = 2f;
     
     public Vector3 Forward { get; private set; }
-
-    private StaticInfo _staticInfo;
-    private KinematicSeek _kinematicSeek;
-    private KinematicWander _kinematicWander;
     private Player _player;
     private Spatial _pivot;
     private LineDrawer _lineDrawer;
+    
+    private AiInfo _aiInfo;
+    private KinematicSeek _kinematicSeek;
+    private KinematicWander _kinematicWander;
 
     public override void _Ready()
     {
@@ -31,11 +30,11 @@ public class Agent : KinematicBody
         
         _player = GetNode<Player>(PlayerPath);
         
-        _staticInfo = new StaticInfo();
+        _aiInfo = new AiInfo();
         _kinematicSeek = new KinematicSeek(
-            _staticInfo, _player.StaticInfo, MaxChaseSpeed, ChaseStopRadius
+            _aiInfo, _player.KinematicAiInfo, MaxChaseSpeed, ChaseStopRadius
         );
-        _kinematicWander = new KinematicWander(_staticInfo, MaxChaseSpeed, MaxRotation);
+        _kinematicWander = new KinematicWander(_aiInfo, MaxChaseSpeed, MaxRotation);
     }
 
     public override void _Process(float delta)
@@ -50,31 +49,31 @@ public class Agent : KinematicBody
 
     private void SeekMove()
     {
-        if (_kinematicSeek.GetSteering(out KinematicSteeringOutput steeringOutput))
+        if (_kinematicSeek.GetSteering(out SteeringOutput steering))
         {
             _pivot.RotationDegrees = new Vector3(
-                _pivot.RotationDegrees.x, _staticInfo.Orientation, _pivot.RotationDegrees.z
+                _pivot.RotationDegrees.x, _aiInfo.Orientation, _pivot.RotationDegrees.z
             );
             Forward = _pivot.Transform.basis.z;
         
-            MoveAndSlide(steeringOutput.Velocity, Vector3.Up);
+            MoveAndSlide(steering.Velocity, Vector3.Up);
         }
-        _staticInfo.Update(GlobalTransform.origin, _staticInfo.Orientation);
+        _aiInfo.Equalize(GlobalTransform.origin, _pivot.RotationDegrees.y);
     }
 
     private void WanderMove()
     {
-        if (_kinematicWander.GetSteering(out KinematicSteeringOutput steeringOutput))
+        if (_kinematicWander.GetSteering(out SteeringOutput steering))
         {
             _pivot.RotationDegrees = new Vector3(
                 _pivot.RotationDegrees.x,
-                _pivot.RotationDegrees.y + steeringOutput.Rotation,
+                _pivot.RotationDegrees.y + steering.Rotation,
                 _pivot.RotationDegrees.z
             );
             Forward = _pivot.Transform.basis.z;
 
-            MoveAndSlide(steeringOutput.Velocity, Vector3.Up);
+            MoveAndSlide(steering.Velocity, Vector3.Up);
         }
-        _staticInfo.Update(GlobalTransform.origin, _pivot.RotationDegrees.y);
+        _aiInfo.Equalize(GlobalTransform.origin, _pivot.RotationDegrees.y);
     }
 }
