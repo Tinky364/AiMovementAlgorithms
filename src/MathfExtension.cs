@@ -13,4 +13,10 @@ public static class MathfExtension
     {
         return Mathf.Clamp(t - Mathf.Floor(t / length) * length, 0.0f, length);
     }
+
+    public static float DirectionToOrientation(Vector3 direction)
+    {
+        if (!direction.IsNormalized()) direction = direction.Normalized();
+        return Mathf.Rad2Deg(Mathf.Atan2(direction.x, direction.z));
+    }
 }

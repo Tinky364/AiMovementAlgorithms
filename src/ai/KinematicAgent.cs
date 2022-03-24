@@ -4,13 +4,17 @@ using Godot;
 public class KinematicAgent : KinematicBody
 {
     [Export]
+    public BehaviorType CurBehaviorType;
+    [Export]
     public NodePath PlayerPath;
+    
     [Export(PropertyHint.Range, "0,100,or_greater")]
-    public int MaxChaseSpeed = 5;
+    public int MaxSpeed = 5;
+    [Export(PropertyHint.Range, "0,10,or_greater")]
+    public float TargetPositionRadius = 2f;
+    
     [Export(PropertyHint.Range, "0,100,or_greater")]
     public int MaxRotation = 5;
-    [Export(PropertyHint.Range, "0,10,or_greater")]
-    public float ChaseStopRadius = 2f;
     
     public Vector3 Forward { get; private set; }
     private Player _player;
@@ -18,8 +22,10 @@ public class KinematicAgent : KinematicBody
     private LineDrawer _lineDrawer;
     
     private AiInfo _aiInfo;
-    private KinematicSeek _kinematicSeek;
-    private KinematicWander _kinematicWander;
+
+    public enum BehaviorType { Arrive, Wander }
+    private Arrive _arrive;
+    private Wander _wander;
 
     public override void _Ready()
     {
@@ -31,10 +37,8 @@ public class KinematicAgent : KinematicBody
         _player = GetNode<Player>(PlayerPath);
         
         _aiInfo = new AiInfo();
-        _kinematicSeek = new KinematicSeek(
-            _aiInfo, _player.KinematicAiInfo, MaxChaseSpeed, ChaseStopRadius
-        );
-        _kinematicWander = new KinematicWander(_aiInfo, MaxChaseSpeed, MaxRotation);
+        _arrive = new Arrive(_aiInfo, _player.KinematicAiInfo, MaxSpeed, TargetPositionRadius);
+        _wander = new Wander(_aiInfo, MaxSpeed, MaxRotation);
     }
 
     public override void _Process(float delta)
@@ -44,12 +48,20 @@ public class KinematicAgent : KinematicBody
     
     public override void _PhysicsProcess(float delta)
     {
-        SeekMove();
+        switch (CurBehaviorType)
+        {
+            case BehaviorType.Arrive:
+                Arrive();
+                break;
+            case BehaviorType.Wander:
+                Wander();
+                break;
+        }
     }
 
-    private void SeekMove()
+    private void Arrive()
     {
-        if (_kinematicSeek.GetSteering(out SteeringOutput steering))
+        if (_arrive.GetSteering(out SteeringOutput steering))
         {
             _pivot.RotationDegrees = new Vector3(
                 _pivot.RotationDegrees.x, _aiInfo.Orientation, _pivot.RotationDegrees.z
@@ -61,9 +73,9 @@ public class KinematicAgent : KinematicBody
         _aiInfo.Equalize(GlobalTransform.origin, _pivot.RotationDegrees.y);
     }
 
-    private void WanderMove()
+    private void Wander()
     {
-        if (_kinematicWander.GetSteering(out SteeringOutput steering))
+        if (_wander.GetSteering(out SteeringOutput steering))
         {
             _pivot.RotationDegrees = new Vector3(
                 _pivot.RotationDegrees.x,

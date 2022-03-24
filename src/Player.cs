@@ -1,7 +1,7 @@
 using Godot;
 using Manager;
 using KinematicAiInfo = Ai.Kinematic.AiInfo;
-using SteeringAiInfo = Ai.SteeringBehavior.AiInfo;
+using SteeringAiInfo = Ai.Steering.AiInfo;
 
 public class Player : KinematicBody
 {
@@ -56,7 +56,7 @@ public class Player : KinematicBody
         _velocity = MoveAndSlide(_velocity, Vector3.Up);
         
         KinematicAiInfo.Equalize(GlobalTransform.origin, _pivot.RotationDegrees.y);
-        SteeringAiInfo.Equalize(GlobalTransform.origin, _pivot.RotationDegrees.y, _velocity, 0);
+        SteeringAiInfo.EqualizePositionsAndSpeeds(GlobalTransform.origin, _pivot.RotationDegrees.y, _velocity, 0);
     }
 
     private Vector3 CalculateAxisInput()

@@ -1,4 +1,4 @@
-﻿namespace Ai.SteeringBehavior
+﻿namespace Ai.Steering
 {
     public class Seek
     {
@@ -20,7 +20,7 @@
 
             // Calculates the distance vector to the target.
             result.Linear = Target.Position - Character.Position;
-            
+
             // Calculates the linear acceleration.
             result.Linear = result.Linear.Normalized() * MaxAcceleration; // direction * acceleration
             

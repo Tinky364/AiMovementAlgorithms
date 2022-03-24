@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace Ai.SteeringBehavior
+namespace Ai.Steering
 {
     public class Arrive
     {
@@ -10,6 +10,7 @@ namespace Ai.SteeringBehavior
         public int MaxSpeed { get; set; }
         public int MaxAcceleration { get; set; }
 
+        /// The time over which to achieve target speed.
         private float _timeToTarget = 0.1f;
         
         public Arrive(AiInfo character, AiInfo target, int maxSpeed, int maxAcceleration)
@@ -26,23 +27,24 @@ namespace Ai.SteeringBehavior
 
             Vector3 direction = Target.Position - Character.Position; // distance vector
             float distance = direction.Length();
-            direction = direction.Normalized(); // direction vector
+            direction = direction.Normalized();
             
             // Stops when it reaches the target position.
             if (distance < targetRadius) return false;
 
             // Calculates the target velocity.
             // Stops slowly while inside the slow radius, else moves at max speed.
+            // Slows it down using the ratio of distance.
             float targetSpeed = MaxSpeed;
             if (distance < slowRadius) targetSpeed = MaxSpeed * distance / slowRadius; 
             Vector3 targetVelocity = direction * targetSpeed;
 
-            // Calculates the acceleration the character needs to reach the target velocity.
-            // _timeToTarget causes massive slow down.
+            // Calculates the acceleration the character needs to reach the target velocity in
+            // _timeToTarget seconds.
             result.Linear = (targetVelocity - Character.Velocity) / _timeToTarget;
             
             // Checks if the acceleration is too fast.
-            if (result.Linear.Length() > MaxAcceleration)
+            if (result.Linear.Length() > MaxAcceleration) 
                 result.Linear = result.Linear.Normalized() * MaxAcceleration;
 
             result.Angular = 0;

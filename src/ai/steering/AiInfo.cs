@@ -1,12 +1,11 @@
 ﻿using Godot;
 
-namespace Ai.SteeringBehavior
+namespace Ai.Steering
 {
     public class AiInfo
     {
         public Vector3 Position { get; set; } // Global position
         public float Orientation { get; set; } // Angle in Y axis
-        
         public Vector3 Velocity { get; set; } // Linear speed vector
         public float Rotation { get; set; } // Angular speed
 
@@ -15,31 +14,24 @@ namespace Ai.SteeringBehavior
         /// and the rotation of the owner. 
         /// </summary>
         /// <param name="steeringOutput">Calculated result of the called behaviour.</param>
-        /// <param name="maxSpeed">Max linear speed the owner can reach.</param>
         /// <param name="delta">Frame delta time.</param>
-        public void Process(SteeringOutput steeringOutput, float maxSpeed, float delta)
+        public void ProcessPositionsAndSpeeds(SteeringOutput steeringOutput, float delta)
         {
             Position += Velocity * delta;
             Orientation += Rotation * delta;
-            
             Velocity += steeringOutput.Linear * delta;
             Rotation += steeringOutput.Angular * delta;
-
-            if (Velocity.Length() > maxSpeed) Velocity = Velocity.Normalized() * maxSpeed;
         }
         
         /// <summary>
         /// Call this function every frame to calculate the velocity and the rotation of the owner.
         /// </summary>
         /// <param name="steeringOutput">Calculated result of the called behaviour.</param>
-        /// <param name="maxSpeed">Max linear speed the owner can reach.</param>
         /// <param name="delta">Frame delta time.</param>
-        public void ProcessSpeeds(SteeringOutput steeringOutput, float maxSpeed, float delta)
+        public void ProcessSpeeds(SteeringOutput steeringOutput, float delta)
         {
             Velocity += steeringOutput.Linear * delta;
             Rotation += steeringOutput.Angular * delta;
-
-            if (Velocity.Length() > maxSpeed) Velocity = Velocity.Normalized() * maxSpeed;
         }
 
         /// <summary>
@@ -49,7 +41,7 @@ namespace Ai.SteeringBehavior
         /// <param name="orientation">Current angle in Vector.Up axis of the owner.</param>
         /// <param name="velocity">Current linear speed vector of the owner.</param>
         /// <param name="rotation">Current angular speed of the owner.</param>
-        public void Equalize(Vector3 position, float orientation, Vector3 velocity, float rotation)
+        public void EqualizePositionsAndSpeeds(Vector3 position, float orientation, Vector3 velocity, float rotation)
         {
             Position = position;
             Orientation = orientation;
@@ -62,7 +54,7 @@ namespace Ai.SteeringBehavior
         /// </summary>
         /// <param name="position">Current global position of the owner.</param>
         /// <param name="orientation">Current angle in Vector.Up axis of the owner.</param>
-        public void Equalize(Vector3 position, float orientation)
+        public void EqualizePositions(Vector3 position, float orientation)
         {
             Position = position;
             Orientation = orientation;

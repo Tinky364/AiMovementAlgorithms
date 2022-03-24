@@ -1,32 +1,43 @@
-using System;
-using Ai.SteeringBehavior;
+using Ai.Steering;
 using Godot;
 
 public class SteeringAgent : KinematicBody
 {
     [Export]
-    public MoveType CurMoveType;
+    public BehaviorType CurBehaviorType;
     [Export]
     public NodePath PlayerPath;
+    
     [Export(PropertyHint.Range, "0,100,or_greater")]
-    public int MaxChaseSpeed = 5;
+    public int MaxSpeed = 5;
     [Export(PropertyHint.Range, "0,100,or_greater")]
     public int MaxAcceleration = 20;
     [Export(PropertyHint.Range, "0,10,or_greater")]
-    public int TargetRadius = 2;
+    public int TargetPositionRadius = 2;
     [Export(PropertyHint.Range, "0,10,or_greater")]
-    public int SlowRadius = 4;
+    public int SlowPositionRadius = 6;
+    
+    [Export(PropertyHint.Range, "0,100,or_greater")]
+    public int MaxRotation = 90;
+    [Export(PropertyHint.Range, "0,100,or_greater")]
+    public int MaxAngularAcceleration = 240;
+    [Export(PropertyHint.Range, "0,100,or_greater")]
+    public int TargetOrientationRadius = 1;
+    [Export(PropertyHint.Range, "0,100,or_greater")]
+    public int SlowOrientationRadius = 30;
    
     public Vector3 Forward { get; private set; }
     private Player _player;
     private Spatial _pivot;
     private LineDrawer _lineDrawer;
-    
-    public enum MoveType { Seek, Arrive }
 
     private AiInfo _aiInfo;
+    
+    public enum BehaviorType { Seek, Arrive, Align, VelocityMatch }
     private Seek _seek;
     private Arrive _arrive;
+    private Align _align;
+    private VelocityMatch _velocityMatch;
     
     public override void _Ready()
     {
@@ -39,7 +50,9 @@ public class SteeringAgent : KinematicBody
         
         _aiInfo = new AiInfo();
         _seek = new Seek(_aiInfo, _player.SteeringAiInfo, MaxAcceleration);
-        _arrive = new Arrive(_aiInfo, _player.SteeringAiInfo, MaxChaseSpeed, MaxAcceleration);
+        _arrive = new Arrive(_aiInfo, _player.SteeringAiInfo, MaxSpeed, MaxAcceleration);
+        _align = new Align(_aiInfo, _player.SteeringAiInfo, MaxRotation, MaxAngularAcceleration);
+        _velocityMatch = new VelocityMatch(_aiInfo, _player.SteeringAiInfo, MaxAcceleration);
     }
     
     public override void _Process(float delta)
@@ -49,34 +62,64 @@ public class SteeringAgent : KinematicBody
     
     public override void _PhysicsProcess(float delta)
     {
-        switch (CurMoveType)
+        switch (CurBehaviorType)
         {
-            case MoveType.Seek:
-                SeekMove(delta);
+            case BehaviorType.Seek:
+                Seek(delta);
                 break;
-            case MoveType.Arrive:
-                ArriveMove(delta);
+            case BehaviorType.Arrive:
+                Arrive(delta);
+                break;
+            case BehaviorType.Align:
+                Align(delta);
+                break;
+            case BehaviorType.VelocityMatch:
+                VelocityMatch(delta);
                 break;
         }
     }
 
-    private void SeekMove(float delta)
+    private void Seek(float delta)
     {
         if (_seek.GetSteering(out SteeringOutput steering))
         {
-            _aiInfo.ProcessSpeeds(steering, MaxChaseSpeed, delta);
+            _aiInfo.ProcessSpeeds(steering, delta);
+            if (_aiInfo.Velocity.Length() > MaxSpeed) 
+                _aiInfo.Velocity = _aiInfo.Velocity.Normalized() * MaxSpeed;
             MoveAndSlide(_aiInfo.Velocity, Vector3.Up);
         }
-        _aiInfo.Equalize(GlobalTransform.origin, _pivot.RotationDegrees.y);
+        _aiInfo.EqualizePositions(GlobalTransform.origin, _pivot.RotationDegrees.y);
     }
 
-    private void ArriveMove(float delta)
+    private void Arrive(float delta)
     {
-        if (_arrive.GetSteering(out SteeringOutput steering, TargetRadius, SlowRadius))
+        if (_arrive.GetSteering(out SteeringOutput steering, TargetPositionRadius, SlowPositionRadius))
         {
-            _aiInfo.ProcessSpeeds(steering, MaxChaseSpeed, delta);
+            _aiInfo.ProcessSpeeds(steering, delta);
             MoveAndSlide(_aiInfo.Velocity, Vector3.Up);
         }
-        _aiInfo.Equalize(GlobalTransform.origin, _pivot.RotationDegrees.y);
+        _aiInfo.EqualizePositions(GlobalTransform.origin, _pivot.RotationDegrees.y);
+    }
+
+    private void Align(float delta)
+    {
+        if (_align.GetSteering(out SteeringOutput steering, TargetOrientationRadius, SlowOrientationRadius))
+        {
+            _aiInfo.ProcessPositionsAndSpeeds(steering, delta);
+            _pivot.RotationDegrees = new Vector3(
+                _pivot.RotationDegrees.x, _aiInfo.Orientation, _pivot.RotationDegrees.z
+            );
+            Forward = _pivot.Transform.basis.z;
+        }
+    }
+
+    private void VelocityMatch(float delta)
+    {
+        if (_velocityMatch.GetSteering(out SteeringOutput steering))
+        {
+            _aiInfo.ProcessSpeeds(steering, delta);
+            MoveAndSlide(_aiInfo.Velocity, Vector3.Up);
+        }
+        _aiInfo.EqualizePositions(GlobalTransform.origin, _pivot.RotationDegrees.y);
     }
 } 

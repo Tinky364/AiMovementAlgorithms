@@ -2,16 +2,17 @@
 
 namespace Ai.Kinematic
 {
-    public class KinematicSeek
+    public class Arrive
     {
         public AiInfo Character { get; set; }
         public AiInfo Target { get; set; }
+        
         public int MaxSpeed { get; set; }
         public float Radius { get; set; }
 
         private const float TimeToTarget = 0.25f;
 
-        public KinematicSeek(AiInfo character, AiInfo target, int maxSpeed, float radius)
+        public Arrive(AiInfo character, AiInfo target, int maxSpeed, float radius)
         {
             Character = character;
             Target = target;
@@ -45,7 +46,7 @@ namespace Ai.Kinematic
         private float NewOrientation(float current, Vector3 direction)
         {
             if (direction == Vector3.Zero) return current;
-            float targetOrientation = Mathf.Rad2Deg(Mathf.Atan2(direction.x, direction.z));
+            float targetOrientation = MathfExtension.DirectionToOrientation(direction);
             float diff = (targetOrientation - current + 180) % 360 - 180;
             diff = diff < -180 ? diff + 360 : diff;
             if (Mathf.Abs(diff) <= 0.1f) return current;

@@ -2,7 +2,7 @@
 
 namespace Ai.Kinematic
 {
-    public class KinematicWander
+    public class Wander
     {
         public AiInfo Character { get; set; }
         public int MaxSpeed { get; set; }
@@ -10,7 +10,7 @@ namespace Ai.Kinematic
 
         private readonly RandomNumberGenerator _rng;
 
-        public KinematicWander(AiInfo character, int maxSpeed, int maxRotation)
+        public Wander(AiInfo character, int maxSpeed, int maxRotation)
         {
             Character = character;
             MaxSpeed = maxSpeed;

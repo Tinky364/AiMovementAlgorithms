@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace Ai.SteeringBehavior
+namespace Ai.Steering
 {
     public class SteeringOutput
     {
