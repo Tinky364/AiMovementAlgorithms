@@ -23,9 +23,15 @@ public class KinematicAgent : KinematicBody
     
     private AiInfo _aiInfo;
 
-    public enum BehaviorType { Arrive, Wander }
+    public enum BehaviorType { Seek, Arrive, Wander }
+    private Seek _seek;
     private Arrive _arrive;
     private Wander _wander;
+
+    public override void _EnterTree()
+    {
+        _aiInfo = new AiInfo();
+    }
 
     public override void _Ready()
     {
@@ -36,7 +42,7 @@ public class KinematicAgent : KinematicBody
         
         _player = GetNode<Player>(PlayerPath);
         
-        _aiInfo = new AiInfo();
+        _seek = new Seek(_aiInfo, _player.KinematicAiInfo, MaxSpeed);
         _arrive = new Arrive(_aiInfo, _player.KinematicAiInfo, MaxSpeed, TargetPositionRadius);
         _wander = new Wander(_aiInfo, MaxSpeed, MaxRotation);
     }
@@ -50,6 +56,9 @@ public class KinematicAgent : KinematicBody
     {
         switch (CurBehaviorType)
         {
+            case BehaviorType.Seek:
+                Seek();
+                break;
             case BehaviorType.Arrive:
                 Arrive();
                 break;
@@ -57,6 +66,20 @@ public class KinematicAgent : KinematicBody
                 Wander();
                 break;
         }
+    }
+
+    private void Seek()
+    {
+        if (_seek.GetSteering(out SteeringOutput steering))
+        {
+            _pivot.RotationDegrees = new Vector3(
+                _pivot.RotationDegrees.x, _aiInfo.Orientation, _pivot.RotationDegrees.z
+            );
+            Forward = _pivot.Transform.basis.z;
+        
+            MoveAndSlide(steering.Velocity, Vector3.Up);
+        }
+        _aiInfo.EqualizePositions(GlobalTransform.origin, _pivot.RotationDegrees.y);
     }
 
     private void Arrive()
@@ -70,7 +93,7 @@ public class KinematicAgent : KinematicBody
         
             MoveAndSlide(steering.Velocity, Vector3.Up);
         }
-        _aiInfo.Equalize(GlobalTransform.origin, _pivot.RotationDegrees.y);
+        _aiInfo.EqualizePositions(GlobalTransform.origin, _pivot.RotationDegrees.y);
     }
 
     private void Wander()
@@ -86,6 +109,6 @@ public class KinematicAgent : KinematicBody
 
             MoveAndSlide(steering.Velocity, Vector3.Up);
         }
-        _aiInfo.Equalize(GlobalTransform.origin, _pivot.RotationDegrees.y);
+        _aiInfo.EqualizePositions(GlobalTransform.origin, _pivot.RotationDegrees.y);
     }
 }

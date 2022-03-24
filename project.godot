@@ -57,6 +57,12 @@ move_back={
  ]
 }
 
+[layer_names]
+
+3d_physics/layer_1="player"
+3d_physics/layer_2="enemy"
+3d_physics/layer_3="ground"
+
 [physics]
 
 common/physics_jitter_fix=0.0

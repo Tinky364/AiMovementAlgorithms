@@ -8,7 +8,7 @@
         public int MaxAcceleration { get; set; }
 
         /// The time over which to achieve target speed.
-        private float _timeToTarget = 0.1f; 
+        private const float TimeToTarget = 0.1f; 
         
         public VelocityMatch(AiInfo character, AiInfo target, int maxAcceleration)
         {
@@ -22,8 +22,8 @@
             result = new SteeringOutput();
             
             // Calculates the acceleration the character needs to reach the target velocity in
-            // _timeToTarget seconds.
-            result.Linear = (Target.Velocity - Character.Velocity) / _timeToTarget;
+            // TimeToTarget seconds.
+            result.Linear = (Target.Velocity - Character.Velocity) / TimeToTarget;
             
             // Check if the acceleration is too fast.
             if (result.Linear.Length() > MaxAcceleration)

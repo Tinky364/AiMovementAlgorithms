@@ -11,7 +11,7 @@ namespace Ai.Steering
         public int MaxAngularAcceleration { get; set; }
 
         /// The time over which to achieve target speed.
-        private float _timeToTarget = 0.1f;
+        private const float TimeToTarget = 0.1f;
         
         public Align(AiInfo character, AiInfo target, int maxRotation, int maxAngularAcceleration)
         {
@@ -41,8 +41,8 @@ namespace Ai.Steering
             targetRotation *= rotation / rotationSize;
 
             // Calculates the acceleration the character needs to reach the target rotation in
-            // _timeToTarget seconds.
-            result.Angular = (targetRotation - Character.Rotation) / _timeToTarget;
+            // TimeToTarget seconds.
+            result.Angular = (targetRotation - Character.Rotation) / TimeToTarget;
 
             // Checks if the acceleration is too fast.
             float angularAcceleration = Mathf.Abs(result.Angular);

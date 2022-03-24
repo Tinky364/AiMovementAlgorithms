@@ -26,14 +26,17 @@ public class Player : KinematicBody
     public KinematicAiInfo KinematicAiInfo;
     public SteeringAiInfo SteeringAiInfo;
 
+    public override void _EnterTree()
+    {
+        KinematicAiInfo = new KinematicAiInfo();
+        SteeringAiInfo = new SteeringAiInfo();
+    }
+
     public override void _Ready()
     {
         _pivot= GetNode<Spatial>("Pivot");
         _lineDrawer = new LineDrawer();
         AddChild(_lineDrawer);
-        
-        KinematicAiInfo = new KinematicAiInfo();
-        SteeringAiInfo = new SteeringAiInfo();
     }
 
     public override void _Process(float delta)
@@ -55,7 +58,7 @@ public class Player : KinematicBody
         Forward = _pivot.Transform.basis.z;
         _velocity = MoveAndSlide(_velocity, Vector3.Up);
         
-        KinematicAiInfo.Equalize(GlobalTransform.origin, _pivot.RotationDegrees.y);
+        KinematicAiInfo.EqualizePositions(GlobalTransform.origin, _pivot.RotationDegrees.y);
         SteeringAiInfo.EqualizePositionsAndSpeeds(GlobalTransform.origin, _pivot.RotationDegrees.y, _velocity, 0);
     }
 
@@ -71,9 +74,7 @@ public class Player : KinematicBody
         return inputAxis;
     }
 
-    private float NewOrientation(
-        float current, Vector3 direction, float acceleration, float delta
-    )
+    private float NewOrientation(float current, Vector3 direction, float acceleration, float delta)
     {
         if (direction == Vector3.Zero) return current;
         float targetOrientation = Mathf.Rad2Deg(Mathf.Atan2(direction.x, direction.z));

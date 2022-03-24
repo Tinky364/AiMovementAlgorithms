@@ -38,7 +38,12 @@ public class SteeringAgent : KinematicBody
     private Arrive _arrive;
     private Align _align;
     private VelocityMatch _velocityMatch;
-    
+
+    public override void _EnterTree()
+    {
+        _aiInfo = new AiInfo();
+    }
+
     public override void _Ready()
     {
         _pivot= GetNode<Spatial>("Pivot");
@@ -48,7 +53,6 @@ public class SteeringAgent : KinematicBody
         
         _player = GetNode<Player>(PlayerPath);
         
-        _aiInfo = new AiInfo();
         _seek = new Seek(_aiInfo, _player.SteeringAiInfo, MaxAcceleration);
         _arrive = new Arrive(_aiInfo, _player.SteeringAiInfo, MaxSpeed, MaxAcceleration);
         _align = new Align(_aiInfo, _player.SteeringAiInfo, MaxRotation, MaxAngularAcceleration);

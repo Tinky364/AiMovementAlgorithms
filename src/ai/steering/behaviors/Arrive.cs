@@ -11,7 +11,7 @@ namespace Ai.Steering
         public int MaxAcceleration { get; set; }
 
         /// The time over which to achieve target speed.
-        private float _timeToTarget = 0.1f;
+        private const float TimeToTarget = 0.1f;
         
         public Arrive(AiInfo character, AiInfo target, int maxSpeed, int maxAcceleration)
         {
@@ -40,8 +40,8 @@ namespace Ai.Steering
             Vector3 targetVelocity = direction * targetSpeed;
 
             // Calculates the acceleration the character needs to reach the target velocity in
-            // _timeToTarget seconds.
-            result.Linear = (targetVelocity - Character.Velocity) / _timeToTarget;
+            // TimeToTarget seconds.
+            result.Linear = (targetVelocity - Character.Velocity) / TimeToTarget;
             
             // Checks if the acceleration is too fast.
             if (result.Linear.Length() > MaxAcceleration) 

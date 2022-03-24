@@ -13,7 +13,7 @@ namespace Ai.Kinematic
         /// </summary>
         /// <param name="steeringOutput">Calculated result of the called behaviour.</param>
         /// <param name="delta">Frame delta time.</param>
-        public void Process(SteeringOutput steeringOutput, float delta)
+        public void ProcessPositions(SteeringOutput steeringOutput, float delta)
         {
             Position += steeringOutput.Velocity * delta;
             Orientation += steeringOutput.Rotation * delta;
@@ -24,7 +24,7 @@ namespace Ai.Kinematic
         /// </summary>
         /// <param name="position">Current global position of the owner.</param>
         /// <param name="orientation">Current angle in Vector.Up axis of the owner.</param>
-        public void Equalize(Vector3 position, float orientation)
+        public void EqualizePositions(Vector3 position, float orientation)
         {
             Position = position;
             Orientation = orientation;
