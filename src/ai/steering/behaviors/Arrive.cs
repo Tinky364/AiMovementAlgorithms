@@ -13,6 +13,8 @@ namespace Ai.Steering
         /// The time over which to achieve target speed.
         private const float TimeToTarget = 0.1f;
         
+        protected Arrive() { }
+        
         public Arrive(AiInfo character, AiInfo target, int maxSpeed, int maxAcceleration)
         {
             Character = character;

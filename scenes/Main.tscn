@@ -16,11 +16,13 @@ extents = Vector3( 15, 1, 15 )
 [node name="Main" instance=ExtResource( 3 )]
 
 [node name="CameraPivot" type="Position3D" parent="World" index="0"]
-transform = Transform( 1, 0, 0, 0, 0.5, -0.866025, 0, 0.866025, 0.5, 0, 0, -4.00469 )
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
 
 [node name="Camera" type="Camera" parent="World/CameraPivot" index="0"]
 transform = Transform( -1, 0, -1.50996e-07, 0, 1, 0, 1.50996e-07, 0, -1, -2.39761e-07, -0.653303, -14.263 )
+projection = 1
 current = true
+size = 32.0
 
 [node name="Ground" type="StaticBody" parent="World" index="1"]
 collision_layer = 4
@@ -40,11 +42,13 @@ transform = Transform( 1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0
 shadow_enabled = true
 
 [node name="SteeringAgent" parent="World" index="3" instance=ExtResource( 2 )]
-CurBehaviorType = 1
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, 8 )
+CurBehaviorType = 4
 PlayerPath = NodePath("../Player")
+MaxPrediction = 2.0
 
 [node name="Player" parent="World" index="4" instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8.09683 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, -8.09683 )
 MoveSpeed = 10
 MoveAcceleration = 30
 RotationAcceleration = 1000

@@ -1,4 +1,6 @@
-﻿namespace Ai.Steering
+﻿using Godot;
+
+namespace Ai.Steering
 {
     public class Seek
     {
@@ -6,6 +8,8 @@
         public AiInfo Target { get; set; }
         
         public int MaxAcceleration { get; set; }
+
+        protected Seek() { }
 
         public Seek(AiInfo character, AiInfo target, int maxAcceleration)
         {
@@ -20,7 +24,7 @@
 
             // Calculates the distance vector to the target.
             result.Linear = Target.Position - Character.Position;
-
+            
             // Calculates the linear acceleration.
             result.Linear = result.Linear.Normalized() * MaxAcceleration; // direction * acceleration
             

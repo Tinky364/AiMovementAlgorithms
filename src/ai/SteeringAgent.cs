@@ -16,6 +16,8 @@ public class SteeringAgent : KinematicBody
     public int TargetPositionRadius = 2;
     [Export(PropertyHint.Range, "0,10,or_greater")]
     public int SlowPositionRadius = 6;
+    [Export(PropertyHint.Range, "0,10,0.1,or_greater")]
+    public float MaxPrediction = 3;
     
     [Export(PropertyHint.Range, "0,100,or_greater")]
     public int MaxRotation = 90;
@@ -33,11 +35,12 @@ public class SteeringAgent : KinematicBody
 
     private AiInfo _aiInfo;
     
-    public enum BehaviorType { Seek, Arrive, Align, VelocityMatch }
+    public enum BehaviorType { Seek, Arrive, Align, VelocityMatch, Pursue }
     private Seek _seek;
     private Arrive _arrive;
     private Align _align;
     private VelocityMatch _velocityMatch;
+    private Pursue _pursue;
 
     public override void _EnterTree()
     {
@@ -57,6 +60,7 @@ public class SteeringAgent : KinematicBody
         _arrive = new Arrive(_aiInfo, _player.SteeringAiInfo, MaxSpeed, MaxAcceleration);
         _align = new Align(_aiInfo, _player.SteeringAiInfo, MaxRotation, MaxAngularAcceleration);
         _velocityMatch = new VelocityMatch(_aiInfo, _player.SteeringAiInfo, MaxAcceleration);
+        _pursue = new Pursue(_aiInfo, _player.SteeringAiInfo, MaxAcceleration, MaxSpeed, MaxPrediction);
     }
     
     public override void _Process(float delta)
@@ -79,6 +83,9 @@ public class SteeringAgent : KinematicBody
                 break;
             case BehaviorType.VelocityMatch:
                 VelocityMatch(delta);
+                break;
+            case BehaviorType.Pursue:
+                Pursue(delta);
                 break;
         }
     }
@@ -122,6 +129,18 @@ public class SteeringAgent : KinematicBody
         if (_velocityMatch.GetSteering(out SteeringOutput steering))
         {
             _aiInfo.ProcessSpeeds(steering, delta);
+            MoveAndSlide(_aiInfo.Velocity, Vector3.Up);
+        }
+        _aiInfo.EqualizePositions(GlobalTransform.origin, _pivot.RotationDegrees.y);
+    }
+    
+    private void Pursue(float delta)
+    {
+        if (_pursue.GetSteering(out SteeringOutput steering, TargetPositionRadius, SlowPositionRadius))
+        {
+            _aiInfo.ProcessSpeeds(steering, delta);
+            if (_aiInfo.Velocity.Length() > MaxSpeed) 
+                _aiInfo.Velocity = _aiInfo.Velocity.Normalized() * MaxSpeed;
             MoveAndSlide(_aiInfo.Velocity, Vector3.Up);
         }
         _aiInfo.EqualizePositions(GlobalTransform.origin, _pivot.RotationDegrees.y);
