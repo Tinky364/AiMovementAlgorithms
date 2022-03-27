@@ -59,7 +59,7 @@ public class Player : KinematicBody
         _velocity = MoveAndSlide(_velocity, Vector3.Up);
         
         KinematicAiInfo.EqualizePositions(GlobalTransform.origin, _pivot.RotationDegrees.y);
-        SteeringAiInfo.EqualizePositionsAndSpeeds(GlobalTransform.origin, _pivot.RotationDegrees.y, _velocity, 0);
+        SteeringAiInfo.Equalize(GlobalTransform.origin, _pivot.RotationDegrees.y, _velocity, 0);
     }
 
     private Vector3 CalculateAxisInput()
@@ -77,8 +77,8 @@ public class Player : KinematicBody
     private float NewOrientation(float current, Vector3 direction, float acceleration, float delta)
     {
         if (direction == Vector3.Zero) return current;
-        float targetOrientation = MathfExtension.DirectionToOrientation(direction);
-        float diff = MathfExtension.DeltaAngle(current, targetOrientation);
+        float targetOrientation = Mathff.DirectionToOrientation(direction);
+        float diff = Mathff.DeltaAngle(current, targetOrientation);
         if (Mathf.Abs(diff) <= 0.1f) return current;
         current = Mathf.MoveToward(current, current + diff, acceleration * delta);
         return current;

@@ -42,11 +42,9 @@ transform = Transform( 1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0
 shadow_enabled = true
 
 [node name="SteeringAgent" parent="World" index="3" instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, 8 )
-CurBehaviorType = 6
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12 )
+CurBehaviorType = 4
 PlayerPath = NodePath("../Player")
-MaxPrediction = 2.0
-TargetOrientationRadius = 0
 
 [node name="Player" parent="World" index="4" instance=ExtResource( 1 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, -8.09683 )

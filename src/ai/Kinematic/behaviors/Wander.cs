@@ -24,10 +24,7 @@ namespace Ai.Kinematic
             result = new SteeringOutput();
 
             // Calculate the direction vector of the character from its orientation.
-            Vector3 direction = new Vector3(
-                Mathf.Sin(Mathf.Deg2Rad(Character.Orientation)), 0, 
-                Mathf.Cos(Mathf.Deg2Rad(Character.Orientation))
-            );
+            Vector3 direction = Mathff.OrientationToDirection(Character.Orientation);
             
             // Calculate the velocity.
             result.Velocity = MaxSpeed * direction;

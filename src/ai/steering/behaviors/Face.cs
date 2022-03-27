@@ -29,8 +29,9 @@ namespace Ai.Steering
             }
 
             // Calculates the target orientation from the direction.
-            base.Target.Orientation = MathfExtension.DirectionToOrientation(direction);
+            base.Target.Orientation = Mathff.DirectionToOrientation(direction);
             
+            // Aligns with the target orientation.
             return base.GetSteering(out result, targetRadius, slowRadius);
         }
     }

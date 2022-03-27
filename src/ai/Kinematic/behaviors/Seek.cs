@@ -37,7 +37,7 @@ namespace Ai.Kinematic
         private float NewOrientation(float current, Vector3 direction)
         {
             if (direction == Vector3.Zero) return current;
-            float targetOrientation = MathfExtension.DirectionToOrientation(direction);
+            float targetOrientation = Mathff.DirectionToOrientation(direction);
             float diff = (targetOrientation - current + 180) % 360 - 180;
             diff = diff < -180 ? diff + 360 : diff;
             if (Mathf.Abs(diff) <= 0.1f) return current;

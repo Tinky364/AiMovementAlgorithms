@@ -27,7 +27,8 @@ namespace Ai.Steering
         {
             result = new SteeringOutput();
 
-            float rotation = MathfExtension.DeltaAngle(Character.Orientation, Target.Orientation);
+            // Calculates the angle needed to rotate to the target orientation.
+            float rotation = Mathff.DeltaAngle(Character.Orientation, Target.Orientation);
             float rotationSize = Mathf.Abs(rotation);
             
             // Stops when it reaches the target position.

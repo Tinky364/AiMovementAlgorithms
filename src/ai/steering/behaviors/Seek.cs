@@ -1,6 +1,4 @@
-﻿using Godot;
-
-namespace Ai.Steering
+﻿namespace Ai.Steering
 {
     public class Seek
     {

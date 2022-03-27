@@ -33,6 +33,7 @@
             // Calculates the true target position.
             base.Target.Position = Target.Position + Target.Velocity * prediction;
             
+            // Arrives to the target position calculated.
             return base.GetSteering(out result, targetRadius, slowRadius);
         }
     }

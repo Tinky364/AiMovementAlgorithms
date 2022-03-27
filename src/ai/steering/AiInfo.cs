@@ -15,7 +15,7 @@ namespace Ai.Steering
         /// </summary>
         /// <param name="steeringOutput">Calculated result of the called behaviour.</param>
         /// <param name="delta">Frame delta time.</param>
-        public void ProcessPositionsAndSpeeds(SteeringOutput steeringOutput, float delta)
+        public void Process(SteeringOutput steeringOutput, float delta)
         {
             Position += Velocity * delta;
             Orientation += Rotation * delta;
@@ -24,40 +24,18 @@ namespace Ai.Steering
         }
         
         /// <summary>
-        /// Call this function every frame to calculate the velocity and the rotation of the owner.
-        /// </summary>
-        /// <param name="steeringOutput">Calculated result of the called behaviour.</param>
-        /// <param name="delta">Frame delta time.</param>
-        public void ProcessSpeeds(SteeringOutput steeringOutput, float delta)
-        {
-            Velocity += steeringOutput.Linear * delta;
-            Rotation += steeringOutput.Angular * delta;
-        }
-
-        /// <summary>
         /// Call this function every frame if you use the physics engine to update the ai info.
         /// </summary>
         /// <param name="position">Current global position of the owner.</param>
         /// <param name="orientation">Current angle in Vector.Up axis of the owner.</param>
         /// <param name="velocity">Current linear speed vector of the owner.</param>
         /// <param name="rotation">Current angular speed of the owner.</param>
-        public void EqualizePositionsAndSpeeds(Vector3 position, float orientation, Vector3 velocity, float rotation)
+        public void Equalize(Vector3 position, float orientation, Vector3 velocity, float rotation)
         {
             Position = position;
             Orientation = orientation;
             Velocity = velocity;
             Rotation = rotation;
-        }
-        
-        /// <summary>
-        /// Call this function every frame if you use the physics engine to update the ai info.
-        /// </summary>
-        /// <param name="position">Current global position of the owner.</param>
-        /// <param name="orientation">Current angle in Vector.Up axis of the owner.</param>
-        public void EqualizePositions(Vector3 position, float orientation)
-        {
-            Position = position;
-            Orientation = orientation;
         }
     }
 }
