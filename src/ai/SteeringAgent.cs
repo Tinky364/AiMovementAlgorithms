@@ -35,12 +35,14 @@ public class SteeringAgent : KinematicBody
 
     private AiInfo _aiInfo;
     
-    public enum BehaviorType { Seek, Arrive, Align, VelocityMatch, Pursue }
+    public enum BehaviorType { Seek, Arrive, Align, VelocityMatch, Pursue, Face, LookWhereGo }
     private Seek _seek;
     private Arrive _arrive;
     private Align _align;
     private VelocityMatch _velocityMatch;
     private Pursue _pursue;
+    private Face _face;
+    private LookWhereGo _lookWhereGo;
 
     public override void _EnterTree()
     {
@@ -61,11 +63,13 @@ public class SteeringAgent : KinematicBody
         _align = new Align(_aiInfo, _player.SteeringAiInfo, MaxRotation, MaxAngularAcceleration);
         _velocityMatch = new VelocityMatch(_aiInfo, _player.SteeringAiInfo, MaxAcceleration);
         _pursue = new Pursue(_aiInfo, _player.SteeringAiInfo, MaxAcceleration, MaxSpeed, MaxPrediction);
+        _face = new Face(_aiInfo, _player.SteeringAiInfo, MaxRotation, MaxAngularAcceleration);
+        _lookWhereGo = new LookWhereGo(_aiInfo, _player.SteeringAiInfo, MaxRotation, MaxAngularAcceleration);
     }
     
     public override void _Process(float delta)
     {
-        _lineDrawer.DrawLine(Vector3.Zero, Forward);
+        _lineDrawer.DrawLine(new Vector3(0, 1, 0), new Vector3(Forward.x * 100, 1, Forward.z * 100));
     }
     
     public override void _PhysicsProcess(float delta)
@@ -86,6 +90,12 @@ public class SteeringAgent : KinematicBody
                 break;
             case BehaviorType.Pursue:
                 Pursue(delta);
+                break;
+            case BehaviorType.Face: 
+                Face(delta);
+                break;
+            case BehaviorType.LookWhereGo: 
+                LookWhereGo(delta);
                 break;
         }
     }
@@ -122,6 +132,7 @@ public class SteeringAgent : KinematicBody
             );
             Forward = _pivot.Transform.basis.z;
         }
+        _aiInfo.EqualizePositions(GlobalTransform.origin, _pivot.RotationDegrees.y);
     }
 
     private void VelocityMatch(float delta)
@@ -145,4 +156,30 @@ public class SteeringAgent : KinematicBody
         }
         _aiInfo.EqualizePositions(GlobalTransform.origin, _pivot.RotationDegrees.y);
     }
-} 
+
+    private void Face(float delta)
+    {
+        if (_face.GetSteering(out SteeringOutput steering, TargetOrientationRadius, SlowOrientationRadius))
+        {
+            _aiInfo.ProcessPositionsAndSpeeds(steering, delta);
+            _pivot.RotationDegrees = new Vector3(
+                _pivot.RotationDegrees.x, _aiInfo.Orientation, _pivot.RotationDegrees.z
+            );
+            Forward = _pivot.Transform.basis.z;
+        }
+        _aiInfo.EqualizePositions(GlobalTransform.origin, _pivot.RotationDegrees.y);
+    }
+
+    private void LookWhereGo(float delta)
+    {
+        if (_lookWhereGo.GetSteering(out SteeringOutput steering, TargetOrientationRadius, SlowOrientationRadius))
+        {
+            _aiInfo.ProcessPositionsAndSpeeds(steering, delta);
+            _pivot.RotationDegrees = new Vector3(
+                _pivot.RotationDegrees.x, _aiInfo.Orientation, _pivot.RotationDegrees.z
+            );
+            Forward = _pivot.Transform.basis.z;
+        }
+        _aiInfo.EqualizePositions(GlobalTransform.origin, _pivot.RotationDegrees.y);
+    }
+}

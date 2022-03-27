@@ -1,6 +1,4 @@
-﻿using Godot;
-
-namespace Ai.Steering
+﻿namespace Ai.Steering
 {
     public class Pursue : Arrive
     {
@@ -11,9 +9,7 @@ namespace Ai.Steering
         // The maximum prediction time.
         public float MaxPrediction { get; set; }
 
-        public Pursue(
-            AiInfo character, AiInfo target, int maxAcceleration, int maxSpeed, float maxPrediction
-        )
+        public Pursue(AiInfo character, AiInfo target, int maxAcceleration, int maxSpeed, float maxPrediction)
         {
             Character = character;
             Target = target;
@@ -25,8 +21,7 @@ namespace Ai.Steering
 
         public new bool GetSteering(out SteeringOutput result, float targetRadius, float slowRadius)
         {
-            Vector3 direction = Target.Position - Character.Position; // distance vector
-            float distance = direction.Length();
+            float distance = (Target.Position - Character.Position).Length();
             float speed = Character.Velocity.Length();
 
             // Checks if speed gives a reasonable prediction time.

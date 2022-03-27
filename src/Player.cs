@@ -77,9 +77,8 @@ public class Player : KinematicBody
     private float NewOrientation(float current, Vector3 direction, float acceleration, float delta)
     {
         if (direction == Vector3.Zero) return current;
-        float targetOrientation = Mathf.Rad2Deg(Mathf.Atan2(direction.x, direction.z));
-        float diff = (targetOrientation - current + 180) % 360 - 180;
-        diff = diff < -180 ? diff + 360 : diff;
+        float targetOrientation = MathfExtension.DirectionToOrientation(direction);
+        float diff = MathfExtension.DeltaAngle(current, targetOrientation);
         if (Mathf.Abs(diff) <= 0.1f) return current;
         current = Mathf.MoveToward(current, current + diff, acceleration * delta);
         return current;

@@ -13,6 +13,8 @@ namespace Ai.Steering
         /// The time over which to achieve target speed.
         private const float TimeToTarget = 0.1f;
         
+        protected Align() { }
+        
         public Align(AiInfo character, AiInfo target, int maxRotation, int maxAngularAcceleration)
         {
             Character = character;
@@ -25,17 +27,17 @@ namespace Ai.Steering
         {
             result = new SteeringOutput();
 
-            float rotation = Target.Orientation - Character.Orientation;
+            float rotation = MathfExtension.DeltaAngle(Character.Orientation, Target.Orientation);
             float rotationSize = Mathf.Abs(rotation);
-
+            
             // Stops when it reaches the target position.
-            if (rotationSize < targetRadius) return false;
+            if (rotationSize <= targetRadius) return false;
 
             // Calculates the target rotation.
             // Stops slowly while inside the slow radius, else rotates at max rotation.
             // Slows it down using the ratio of distance.
             float targetRotation = MaxRotation;
-            if (rotationSize < slowRadius) targetRotation = MaxRotation * rotationSize / slowRadius;
+            if (rotationSize <= slowRadius) targetRotation = MaxRotation * rotationSize / slowRadius;
 
             // The final target rotation combines speed (already in the variable) and direction.
             targetRotation *= rotation / rotationSize;
@@ -43,7 +45,7 @@ namespace Ai.Steering
             // Calculates the acceleration the character needs to reach the target rotation in
             // TimeToTarget seconds.
             result.Angular = (targetRotation - Character.Rotation) / TimeToTarget;
-
+            
             // Checks if the acceleration is too fast.
             float angularAcceleration = Mathf.Abs(result.Angular);
             if (angularAcceleration > MaxAngularAcceleration)
