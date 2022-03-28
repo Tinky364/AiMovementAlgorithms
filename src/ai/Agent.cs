@@ -24,7 +24,7 @@ public class Agent : KinematicBody
     [Export(PropertyHint.Range, "0,10,or_greater")]
     public int SlowDistance = 6;
     [Export(PropertyHint.Range, "0,10,0.1,or_greater")]
-    public float MaxPredictionTime = 2;
+    public float MaxPursuePredictionTime = 2;
     
     [Export(PropertyHint.Range, "0,100,or_greater")]
     public int MaxAngularSpeed = 90;
@@ -44,8 +44,12 @@ public class Agent : KinematicBody
 
     [Export]
     public NodePath PathPath;
+    [Export]
+    public FollowPath.Type FollowPathType;
     [Export(PropertyHint.Range, "1,20,0.2,or_greater")]
     public float PathOffset = 5;
+    [Export(PropertyHint.Range, "0,10,0.1,or_greater")]
+    public float PathPredictionTime = 2;
     
     public Vector3 Forward { get; private set; }
     
@@ -88,7 +92,7 @@ public class Agent : KinematicBody
         _velocityMatch = new VelocityMatch(_aiInfo, _player.AiInfo, MaxLinearAcceleration);
         _pursue = new Pursue(
             _aiInfo, _player.AiInfo, MaxLinearSpeed, MaxLinearAcceleration, StopDistance, 
-            SlowDistance, MaxPredictionTime
+            SlowDistance, MaxPursuePredictionTime
         );
         _face = new Face(
             _aiInfo, _player.AiInfo, MaxAngularSpeed, MaxAngularAcceleration, StopAngle, 
@@ -101,7 +105,9 @@ public class Agent : KinematicBody
             _aiInfo, MaxAngularSpeed, MaxAngularAcceleration, StopAngle, SlowAngle, WanderOffset, 
             WanderRadius, WanderRate, MaxLinearAcceleration
         );
-        _followPath = new FollowPath(_aiInfo, MaxLinearAcceleration, _path, PathOffset);
+        _followPath = new FollowPath(
+            _aiInfo, MaxLinearAcceleration, FollowPathType, _path, PathOffset, PathPredictionTime
+        );
     }
     
     public override void _Process(float delta)
