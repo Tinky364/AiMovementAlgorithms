@@ -1,7 +1,6 @@
+using Ai.Steering;
 using Godot;
 using Manager;
-using KinematicAiInfo = Ai.Kinematic.AiInfo;
-using SteeringAiInfo = Ai.Steering.AiInfo;
 
 public class Player : KinematicBody
 {
@@ -19,29 +18,24 @@ public class Player : KinematicBody
     public Vector3 Forward { get; private set; }
     public Vector3 Velocity => _velocity;
     private Spatial _pivot;
-    private LineDrawer _lineDrawer;
     private Vector3 _velocity;
     private Vector3 _inputAxis;
     
-    public KinematicAiInfo KinematicAiInfo;
-    public SteeringAiInfo SteeringAiInfo;
+    public AiInfo AiInfo;
 
     public override void _EnterTree()
     {
-        KinematicAiInfo = new KinematicAiInfo();
-        SteeringAiInfo = new SteeringAiInfo();
+        AiInfo = new AiInfo();
     }
 
     public override void _Ready()
     {
         _pivot= GetNode<Spatial>("Pivot");
-        _lineDrawer = new LineDrawer();
-        AddChild(_lineDrawer);
     }
 
     public override void _Process(float delta)
     {
-        _lineDrawer.DrawLine(Vector3.Zero, Forward);
+        Drawer.S.DrawLine(this, Vector3.Zero, Forward);
     }
     
     public override void _PhysicsProcess(float delta)
@@ -58,8 +52,7 @@ public class Player : KinematicBody
         Forward = _pivot.Transform.basis.z;
         _velocity = MoveAndSlide(_velocity, Vector3.Up);
         
-        KinematicAiInfo.EqualizePositions(GlobalTransform.origin, _pivot.RotationDegrees.y);
-        SteeringAiInfo.Equalize(GlobalTransform.origin, _pivot.RotationDegrees.y, _velocity, 0);
+        AiInfo.Sync(GlobalTransform.origin, _pivot.RotationDegrees.y, _velocity, 0);
     }
 
     private Vector3 CalculateAxisInput()

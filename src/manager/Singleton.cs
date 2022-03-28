@@ -1,16 +1,20 @@
 using Godot;
 
-public class Singleton<T> : Node where T : Singleton<T>
+namespace Manager
 {
-    public static T S { get; private set; }
-
-    protected void SetSingleton()
+    public class Singleton<T> : Node where T : Singleton<T> 
     {
-        if (S != null && S != this)
+        public static T S { get; private set; }
+
+        protected void SetSingleton()
         {
-            GD.Print($"Multiple instances of singleton class named {typeof(T)}!");
-            QueueFree();
+            if (S != null && S != this)
+            {
+                GD.Print($"Multiple instances of singleton class named {typeof(T)}!");
+                QueueFree();
+            }
+            else S = (T)this;
         }
-        else S = (T)this;
     }
 }
+

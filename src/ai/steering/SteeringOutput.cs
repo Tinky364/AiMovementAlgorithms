@@ -2,9 +2,15 @@
 
 namespace Ai.Steering
 {
+    /// <summary>
+    /// Used by AI behaviors to report the result of behaviors.
+    /// </summary>
     public class SteeringOutput
     {
-        public Vector3 Linear { get; set; } = Vector3.Zero; // Linear acceleration vector
-        public float Angular { get; set; } = 0;             // Angular acceleration
+        /// Linear acceleration vector.
+        public Vector3 LinearAcceleration { get; set; } = Vector3.Zero;
+        
+        /// Angular acceleration vector.
+        public float AngularAcceleration { get; set; } = 0;             
     }
 }

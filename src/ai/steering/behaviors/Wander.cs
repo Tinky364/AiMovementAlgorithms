@@ -2,39 +2,76 @@
 
 namespace Ai.Steering
 {
+    /// <summary>
+    /// The behavior that causes the character to look around. This behavior defines a virtual
+    /// circle in front of the character, generates random position on this circle, rotates the
+    /// character to this position and moves it to the position. 
+    /// </summary>
     public class Wander : Face
     {
-        public float WanderOffset { get; set; } // How far the circle is from the character.
-        public float WanderRadius { get; set; } // Radius of the circle.
-        public float WanderRate { get; set; } // The maximum rate at which the wander orientation can change.
-        public float WanderOrientation { get; set; } // The current orientation of the wander target.
-        public float MaxAcceleration { get; set; } // The maximum acceleration while moving.
+        /// Specifies how far the circle is from the character`s position.
+        public float WanderOffset { get; set; } 
+        
+        /// The radius of the circle.
+        public float WanderRadius { get; set; }
+        
+        /// The maximum rate at which the wander orientation can change.
+        public float WanderRate { get; set; } 
+        
+        /// The maximum linear acceleration the character can reach.
+        public float MaxLinearAcceleration { get; set; }
+
+        /// The current orientation of the wander target.
+        private float _wanderOrientation;
         
         private readonly RandomNumberGenerator _rng;
 
+        /// <summary>
+        /// The behavior that causes the character to look around. This behavior defines a virtual
+        /// circle in front of the character, generates random position on this circle, rotates the
+        /// character to this position and moves it to the position. Properties can also be changed
+        /// after construction. 
+        /// </summary>
+        /// <param name="character">The AiInfo of the character using the functionality.</param>
+        /// <param name="maxAngularSpeed">The maximum angular speed the character can reach.</param>
+        /// <param name="maxAngularAcceleration">The maximum angular acceleration the character can reach.</param>
+        /// <param name="stopAngle">The angle that specifies how far from the target angle the function can stop working.</param>
+        /// <param name="slowAngle">The angle that specifies how far from the target angle the function can slow the character down.</param>
+        /// <param name="wanderOffset">Specifies how far the circle is from the character`s position.</param>
+        /// <param name="wanderRadius">The radius of the circle.</param>
+        /// <param name="wanderRate">The maximum rate at which the wander orientation can change.</param>
+        /// <param name="maxLinearAcceleration">The maximum linear acceleration the character can reach.</param>
         public Wander(
-            AiInfo character, int maxRotation, int maxAngularAcceleration, float wanderOffset,
-            float wanderRadius, float wanderRate, float maxAcceleration
-        ) : base(character, new AiInfo(), maxRotation, maxAngularAcceleration)
+            AiInfo character, int maxAngularSpeed, int maxAngularAcceleration, float stopAngle,
+            float slowAngle, float wanderOffset, float wanderRadius, float wanderRate, 
+            float maxLinearAcceleration
+        ) : base(
+            character, new AiInfo(), maxAngularSpeed, maxAngularAcceleration, stopAngle, slowAngle
+        )
         {
             WanderOffset = wanderOffset;
             WanderRadius = wanderRadius;
             WanderRate = wanderRate;
-            WanderOrientation = 0;
-            MaxAcceleration = maxAcceleration;
+            MaxLinearAcceleration = maxLinearAcceleration;
             
+            _wanderOrientation = 0;
             _rng = new RandomNumberGenerator();
             _rng.Randomize();
         }
 
-        public new bool GetSteering(out SteeringOutput result, float targetRadius, float slowRadius)
+        /// <summary>
+        /// Processes the behavior and if the behavior can find a result, returns true.
+        /// </summary>
+        /// <param name="result">The result of the behavior. Use its values if the function returns true.</param>
+        /// <returns>If the result is valid, returns true.</returns>
+        public new bool GetSteering(out SteeringOutput result)
         {
             // Updates the wander orientation
-            WanderOrientation += RandomBinomial() * WanderRate;
+            _wanderOrientation += RandomBinomial() * WanderRate;
             
             // Calculates the new target orientation by adding the new WanderOrientation to the
             // current orientation of the character.
-            float targetOrientation = WanderOrientation + Character.Orientation;
+            float targetOrientation = _wanderOrientation + Character.Orientation;
 
             // Calculates the center of the wander circle.
             Target.Position = Character.Position +
@@ -44,10 +81,10 @@ namespace Ai.Steering
             Target.Position += WanderRadius * Mathff.OrientationToDirection(targetOrientation);
 
             // Faces the target position calculated.
-            if (!base.GetSteering(out result, targetRadius, slowRadius)) return false;
+            if (!base.GetSteering(out result)) return false;
             
             // Increases the character's acceleration in its current orientation.
-            result.Linear = MaxAcceleration * Mathff.OrientationToDirection(Character.Orientation);
+            result.LinearAcceleration = MaxLinearAcceleration * Mathff.OrientationToDirection(Character.Orientation);
 
             return true;
         }

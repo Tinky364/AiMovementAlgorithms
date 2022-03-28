@@ -19,6 +19,7 @@ Gm="*res://src/manager/GM.cs"
 TreeTimer="*res://src/manager/TreeTimer.cs"
 Events="*res://src/manager/Events.cs"
 InputManager="*res://src/manager/InputManager.cs"
+Drawer="*res://src/manager/Drawer.cs"
 
 [display]
 

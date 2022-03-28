@@ -26,6 +26,7 @@ namespace Manager
             Events.S.PauseMode = PauseModeEnum.Process;
             TreeTimer.S.PauseMode = PauseModeEnum.Process;
             InputManager.S.PauseMode = PauseModeEnum.Process;
+            Drawer.S.PauseMode = PauseModeEnum.Process;
             
             if (Root.GetChild(Root.GetChildCount() - 1) is SceneManager scene)
                 SetCurrentScene(scene);

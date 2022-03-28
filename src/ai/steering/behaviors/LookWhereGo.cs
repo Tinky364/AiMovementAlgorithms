@@ -2,13 +2,36 @@
 
 namespace Ai.Steering
 {
+    /// <summary>
+    /// The behavior that causes the character to look at where it is going.
+    /// </summary>
     public class LookWhereGo : Align
     {
+        /// <summary>
+        /// The behavior that causes the character to look at where it is going. Properties can also
+        /// be changed after construction.
+        /// </summary>
+        /// <param name="character">The AiInfo of the character using the functionality.</param>
+        /// <param name="maxAngularSpeed">The maximum angular speed the character can reach.</param>
+        /// <param name="maxAngularAcceleration">The maximum angular acceleration the character can reach.</param>
+        /// <param name="stopAngle">The angle that specifies how far from the target angle the function can stop working.</param>
+        /// <param name="slowAngle">The angle that specifies how far from the target angle the function can slow the character down.</param>
         public LookWhereGo(
-            AiInfo character, AiInfo target, int maxRotation, int maxAngularAcceleration)
-            : base(character, target, maxRotation, maxAngularAcceleration) { }
+            AiInfo character, int maxAngularSpeed, int maxAngularAcceleration, float stopAngle,
+            float slowAngle
+        ) : base(
+            character, new AiInfo(), maxAngularSpeed, maxAngularAcceleration, stopAngle, slowAngle
+        )
+        {
+            
+        }
 
-        public new bool GetSteering(out SteeringOutput result, float targetRadius, float slowRadius)
+        /// <summary>
+        /// Processes the behavior and if the behavior can find a result, returns true.
+        /// </summary>
+        /// <param name="result">The result of the behavior. Use its values if the function returns true.</param>
+        /// <returns>If the result is valid, returns true.</returns>
+        public new bool GetSteering(out SteeringOutput result)
         {
             Vector3 direction = Character.Velocity;
             
@@ -23,7 +46,7 @@ namespace Ai.Steering
             Target.Orientation = Mathff.DirectionToOrientation(direction);
 
             // Aligns with the target orientation calculated.
-            return base.GetSteering(out result, targetRadius, slowRadius);
+            return base.GetSteering(out result);
         }
     }
 }
