@@ -1,8 +1,9 @@
-using Ai.Steering;
+using Ai.Behavior;
+using Ai;
 using Godot;
 using Manager;
 
-public class SteeringAgent : KinematicBody
+public class Agent : KinematicBody
 {
     public enum BehaviorType
     {

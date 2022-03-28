@@ -1,4 +1,4 @@
-﻿namespace Ai.Steering
+﻿namespace Ai.Behavior
 {
     /// <summary>
     /// The behavior that causes the character to move to the target`s future position and stop

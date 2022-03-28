@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://subscenes/Player.tscn" type="PackedScene" id=1]
-[ext_resource path="res://subscenes/SteeringAgent.tscn" type="PackedScene" id=2]
+[ext_resource path="res://subscenes/Agent.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/SceneTemplate.tscn" type="PackedScene" id=3]
 
 [sub_resource type="CubeMesh" id=1]
@@ -51,7 +51,7 @@ shadow_enabled = true
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0 )
 curve = SubResource( 4 )
 
-[node name="SteeringAgent" parent="World" index="4" instance=ExtResource( 2 )]
+[node name="Agent" parent="World" index="4" instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, 11 )
 CurBehaviorType = 8
 PlayerPath = NodePath("../Player")

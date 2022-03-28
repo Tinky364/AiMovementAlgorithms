@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace Ai.Steering
+namespace Ai.Behavior
 {
     /// <summary>
     /// The behavior that causes the character to look at the angle the target is looking at.

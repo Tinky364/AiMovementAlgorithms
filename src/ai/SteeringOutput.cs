@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace Ai.Steering
+namespace Ai
 {
     /// <summary>
     /// Used by AI behaviors to report the result of behaviors.

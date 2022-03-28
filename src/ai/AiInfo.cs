@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace Ai.Steering
+namespace Ai
 {
     /// <summary>
     /// Enables the processing of motion information of entities from AI behaviors. Keep motion

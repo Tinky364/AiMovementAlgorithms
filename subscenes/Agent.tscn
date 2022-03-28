@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://src/ai/SteeringAgent.cs" type="Script" id=1]
+[ext_resource path="res://src/ai/Agent.cs" type="Script" id=1]
 
 [sub_resource type="CapsuleMesh" id=1]
 radius = 0.5
@@ -14,7 +14,7 @@ size = Vector3( 0.777, 0.2, 0.2 )
 [sub_resource type="CapsuleShape" id=3]
 radius = 0.5
 
-[node name="SteeringAgent" type="KinematicBody"]
+[node name="Agent" type="KinematicBody"]
 collision_layer = 2
 collision_mask = 4
 script = ExtResource( 1 )
