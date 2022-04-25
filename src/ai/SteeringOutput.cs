@@ -5,12 +5,12 @@ namespace Ai
     /// <summary>
     /// Used by AI behaviors to report the result of behaviors.
     /// </summary>
-    public class SteeringOutput
+    public struct SteeringOutput
     {
         /// Linear acceleration vector.
-        public Vector3 LinearAcceleration { get; set; } = Vector3.Zero;
+        public Vector3 LinearAcceleration { get; set; }
         
         /// Angular acceleration vector.
-        public float AngularAcceleration { get; set; } = 0;             
+        public float AngularAcceleration { get; set; }             
     }
 }

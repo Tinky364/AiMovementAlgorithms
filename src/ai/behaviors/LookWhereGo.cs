@@ -38,7 +38,7 @@ namespace Ai.Behavior
             // If the direction is a zero direction, does not rotates. 
             if (direction.Length() == 0)
             {
-                result = null;
+                result = new SteeringOutput();
                 return false;
             }
 
